@@ -1,4 +1,4 @@
-# DeepSeek LLM Project Description
+# DeepSeek LLM Project
 
 This project is based on Self-LLM and includes features such as model downloading, FastAPI deployment, LangChain integration, Streamlit Web Chatbot, as well as LoRA fine-tuning training and inference.
 
