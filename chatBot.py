@@ -15,7 +15,7 @@ st.title("💬 DeepSeek Chatbot")
 st.caption("🚀 A streamlit chatbot powered by Self-LLM")
 
 # 定义模型路径
-mode_name_or_path = 'E:/phd_documents/self-llm/models/DeepSeek/models/deepseek-ai/deepseek-llm-7b-chat'
+mode_name_or_path = './models/deepseek-ai/deepseek-llm-7b-chat'
 
 # 定义一个函数，用于获取模型和tokenizer
 @st.cache_resource

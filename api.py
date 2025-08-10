@@ -56,7 +56,7 @@ async def create_item(request: Request):
 
 # 主函数入口
 if __name__ == '__main__':
-    mode_name_or_path = 'E:/phd_documents/self-llm/models/DeepSeek/models/deepseek-ai/deepseek-llm-7b-chat'
+    mode_name_or_path = './models/deepseek-ai/deepseek-llm-7b-chat'
     # 加载预训练的分词器和模型
     tokenizer = AutoTokenizer.from_pretrained(mode_name_or_path, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(mode_name_or_path, trust_remote_code=True,torch_dtype=torch.bfloat16,  device_map="auto")

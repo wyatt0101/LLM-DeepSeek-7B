@@ -15,7 +15,7 @@ from torch.utils.data import Dataset
 
 
 # 1. 路径和参数
-model_path = r"E:/phd_documents/self-llm/models/DeepSeek/models/deepseek-ai/deepseek-llm-7b-chat"
+model_path = r"./models/deepseek-ai/deepseek-llm-7b-chat"
 output_dir = "./output/DeepSeek_LoRA"
 max_seq_length = 384
 batch_size = 16

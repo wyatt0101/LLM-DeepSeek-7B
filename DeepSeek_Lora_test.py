@@ -4,7 +4,7 @@ import torch
 
 def main():
     # 基础模型路径（没改的话就是原始模型路径）
-    base_model_path = r"E:/phd_documents/self-llm/models/DeepSeek/models/deepseek-ai/deepseek-llm-7b-chat"
+    base_model_path = r"./models/deepseek-ai/deepseek-llm-7b-chat"
     # LoRA微调权重保存路径
     lora_model_path = r"./output/DeepSeek_LoRA_zhenhuan/checkpoint-351"
 

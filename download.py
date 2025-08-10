@@ -2,7 +2,7 @@ from modelscope import snapshot_download
 
 model_dir = snapshot_download(
     'deepseek-ai/deepseek-llm-7b-chat',
-    cache_dir=r'E:/phd_documents/self-llm/models/DeepSeek/models',
+    cache_dir=r'./models',
     revision='master'
 )
 
