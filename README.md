@@ -12,14 +12,6 @@ This project is based on Self-LLM and includes features such as model downloadin
 - `DeepSeek_Lora.py`: Model fine-tuning training script.
 - `DeepSeek_Lora_test.py`: Loads fine-tuned weights and performs inference.
 
-
-## Environment Dependencies
-
-Install required packages:
-```
-pip install -r requirements.txt
-```
-
   
 ## Installation & Usage
 Clone the project:
@@ -27,6 +19,11 @@ Clone the project:
 ```bash
 git clone https://github.com/wyatt0101/LLM-DeepSeek-7B.git
 cd LLM-DeepSeek-7B
+```
+
+Install required packages:
+```
+pip install -r requirements.txt
 ```
 
 Download model files:
