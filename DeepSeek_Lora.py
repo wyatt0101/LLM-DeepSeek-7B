@@ -34,7 +34,10 @@ model = AutoModelForCausalLM.from_pretrained(
     torch_dtype=torch.float16,
     device_map="auto"
 )
+
+# 从 model_path 加载模型的默认 生成配置（GenerationConfig）
 model.generation_config = GenerationConfig.from_pretrained(model_path)
+# 把 pad_token_id 设置成 eos_token_id
 model.generation_config.pad_token_id = model.generation_config.eos_token_id
 # model.eval()
 
@@ -42,18 +45,36 @@ model.generation_config.pad_token_id = model.generation_config.eos_token_id
 # 3. 配置 LoRA
 print("配置 LoRA...")
 lora_config = LoraConfig(
+    # 用 LoRA 微调的模型是 Causal Language Model
     task_type=TaskType.CAUSAL_LM,
+
+    # target_modules：指定 LoRA 要插入的 权重层 名称。
     target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+
+    # 训练模式，会更新 LoRA 参数
     inference_mode=False,
+
+    # LoRA 的低秩分解维度（rank）
     r=8,
+
+    # 缩放系数，用来放大 LoRA 产生的权重更新
     lora_alpha=32,
+
+    # 训练时对 LoRA 层的输入做 10% 的 dropout, 防止过拟合
     lora_dropout=0.1
 )
 
-model = get_peft_model(model, lora_config)
-model.print_trainable_parameters()  # 显示可训练参数数量
 
+# 来自 PEFT 库，用于将 LoRA 插入到原始模型中
+model = get_peft_model(model, lora_config)
+
+# 显示可训练参数数量
+model.print_trainable_parameters()  
+
+# 梯度检查点（Gradient Checkpointing）,训练时不保存每层的全部中间激活（activation），而是需要时再反向重新计算. 减少显存占用
 model.gradient_checkpointing_enable()
+
+# 允许模型输入张量（input tensors）参与梯度计算
 model.enable_input_require_grads()
 
 
@@ -70,14 +91,15 @@ def process_func(example):
     input_ids, attention_mask, labels = [], [], []
 
     instruction = tokenizer(f"User: {example['instruction']+example['input']}\n\n", add_special_tokens=False)  # add_special_tokens 不在开头加 special_tokens
+
     response = tokenizer(f"Assistant: {example['output']}<｜end▁of▁sentence｜>", add_special_tokens=False)
+
     input_ids = instruction["input_ids"] + response["input_ids"] + [tokenizer.pad_token_id]
-
-    attention_mask = instruction["attention_mask"] + response["attention_mask"] + [1]  # 因为eos token咱们也是要关注的所以 补充为1
-
+    attention_mask = instruction["attention_mask"] + response["attention_mask"] + [1]  # 因为eos token也是要关注的所以 补充为1
     labels = [-100] * len(instruction["input_ids"]) + response["input_ids"] + [tokenizer.pad_token_id]  
 
-    if len(input_ids) > MAX_LENGTH:  # 做一个截断
+    # 做截断
+    if len(input_ids) > MAX_LENGTH:  
         input_ids = input_ids[:MAX_LENGTH]
         attention_mask = attention_mask[:MAX_LENGTH]
         labels = labels[:MAX_LENGTH]
