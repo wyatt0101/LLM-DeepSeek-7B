@@ -35,7 +35,7 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto"
 )
 
-# 从 model_path 加载模型的默认 生成配置（GenerationConfig）
+# 从 model_path 加载模型的默认生成配置（GenerationConfig）
 model.generation_config = GenerationConfig.from_pretrained(model_path)
 # 把 pad_token_id 设置成 eos_token_id
 model.generation_config.pad_token_id = model.generation_config.eos_token_id
@@ -129,10 +129,6 @@ class MyDataset(Dataset):
             "labels": torch.tensor(item["labels"], dtype=torch.long),
         }
     
-# 把预处理好的列表传给 Dataset
-tokenized_dataset = [process_func(x) for x in raw_data]
-train_dataset = MyDataset(tokenized_dataset)
-
 
 # 6. 定义训练参数
 training_args = TrainingArguments(
@@ -151,10 +147,16 @@ training_args = TrainingArguments(
     report_to=[]
 )
 
+# 把预处理好的列表传给 Dataset
+tokenized_dataset = [process_func(x) for x in raw_data]
+# 将数据集转换为 PyTorch Dataset，输出张量形式
+train_dataset = MyDataset(tokenized_dataset)
 
-# 7. 创建 Trainer 并开始训练
+
 data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding=True)
 
+
+# 7. 创建 Trainer 并开始训练
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -166,11 +168,4 @@ print("开始训练...")
 trainer.train()
 
 
-# 8. 微调完成后推理测试
-print("测试微调后的模型...")
-test_text = "小姐，别的秀女都在求中选，唯有咱们小姐想被撂牌子，菩萨一定记得真真儿的——"
-inputs = tokenizer(f"User: {test_text}\n\n", return_tensors="pt").to(model.device)
-outputs = model.generate(**inputs, max_new_tokens=100)
-result = tokenizer.decode(outputs[0], skip_special_tokens=True)
-print("模型回答：", result)
 
